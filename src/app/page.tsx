@@ -1,3 +1,9 @@
-export default function Home() {
-  return <div className=" w-full h-screen flex flex-col items-center"> </div>;
+import QuizApp from "./_components/quizapp";
+
+export default async function Page() {
+  return (
+    <div>
+      <QuizApp />
+    </div>
+  );
 }

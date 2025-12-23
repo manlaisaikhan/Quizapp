@@ -1,0 +1,83 @@
+// Prisma schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  clerkId      String        @unique
+  email        String        @unique
+  name         String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  articles     Article[]
+  quizAttempts QuizAttempt[]
+  userScores   UserScore[]
+}
+
+model Article {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  summary   String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quizzes   Quiz[]
+}
+
+model Quiz {
+  id        String   @id @default(cuid())
+
+  question  String            // 🔥 queistion → question (зассан)
+  options   String            // JSON.stringify([...])
+  answer    String            // correct index ("0", "1", ...)
+
+  articleId String
+  article   Article  @relation(fields: [articleId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  quizAttempts QuizAttempt[]
+  userScores   UserScore[]
+}
+
+model QuizAttempt {
+  id         String   @id @default(cuid())
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  quizId     String
+  quiz       Quiz     @relation(fields: [quizId], references: [id])
+
+  totalScore Int
+
+  createdAt  DateTime @default(now())
+}
+
+model UserScore {
+  id         String   @id @default(cuid())
+
+  userId     String
+  user       User     @relation(fields: [userId], references: [id])
+
+  quizId     String
+  quiz       Quiz     @relation(fields: [quizId], references: [id])
+
+  totalScore Int
+
+  createdAt  DateTime @default(now())
+}
